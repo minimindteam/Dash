@@ -7,7 +7,7 @@ function ContentManagement() {
   const [newKey, setNewKey] = useState('');
   const [newValue, setNewValue] = useState('');
   const [message, setMessage] = useState('');
-  const backendUrl = 'https://your-deployed-backend-url.onrender.com'; // Replace with your deployed backend URL
+  const backendUrl = 'https://minimind-backend.onrender.com'; // Replace with your deployed backend URL
 
   
 

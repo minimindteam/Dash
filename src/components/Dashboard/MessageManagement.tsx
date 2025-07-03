@@ -14,7 +14,7 @@ function MessageManagement() {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const backendUrl = 'https://your-deployed-backend-url.onrender.com'; // Replace with your deployed backend URL
+  const backendUrl = 'https://minimind-backend.onrender.com'; // Replace with your deployed backend URL
 
   const fetchMessages = async () => {
     setLoading(true);

@@ -12,8 +12,7 @@ function LoginPage() {
     setMessage('');
 
     try {
-      // Replace with your deployed backend URL
-      const response = await fetch('https://your-deployed-backend-url.onrender.com/login', {
+      const response = await fetch('https://minimind-backend.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
