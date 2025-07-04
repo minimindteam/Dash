@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 
 const API_URL = 'https://minimind-backend.onrender.com';
 

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
-import ContentManagement from '../components/dashboard/ContentManagement';
-import ImageManagement from '../components/dashboard/ImageManagement';
-import MessageManagement from '../components/dashboard/MessageManagement';
-import TeamManagement from '../components/dashboard/TeamManagement';
-import PortfolioManagement from '../components/dashboard/PortfolioManagement';
+import ContentManagement from '../components/Dashboard/ContentManagement';
+import ImageManagement from '../components/Dashboard/ImageManagement';
+import MessageManagement from '../components/Dashboard/MessageManagement';
+import TeamManagement from '../components/Dashboard/TeamManagement';
+import PortfolioManagement from '../components/Dashboard/PortfolioManagement';
 
 function DashboardPage() {
   const navigate = useNavigate();
