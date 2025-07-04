@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
-import ContentManagement from '../components/Dashboard/ContentManagement';
-import ImageManagement from '../components/Dashboard/ImageManagement';
-import MessageManagement from '../components/Dashboard/MessageManagement';
+import ContentManagement from '../components/dashboard/ContentManagement';
+import ImageManagement from '../components/dashboard/ImageManagement';
+import MessageManagement from '../components/dashboard/MessageManagement';
+import TeamManagement from '../components/dashboard/TeamManagement';
+import PortfolioManagement from '../components/dashboard/PortfolioManagement';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -42,6 +44,12 @@ function DashboardPage() {
             <li className="mb-2">
               <Link to="/dashboard/messages" className="block py-2 px-4 rounded hover:bg-gray-700">Message Management</Link>
             </li>
+            <li className="mb-2">
+              <Link to="/dashboard/team" className="block py-2 px-4 rounded hover:bg-gray-700">Team Management</Link>
+            </li>
+            <li className="mb-2">
+              <Link to="/dashboard/portfolio" className="block py-2 px-4 rounded hover:bg-gray-700">Portfolio Management</Link>
+            </li>
           </ul>
         </nav>
         <main className="flex-1 p-4">
@@ -49,6 +57,8 @@ function DashboardPage() {
             <Route path="content" element={<ContentManagement />} />
             <Route path="images" element={<ImageManagement />} />
             <Route path="messages" element={<MessageManagement />} />
+            <Route path="team" element={<TeamManagement />} />
+            <Route path="portfolio" element={<PortfolioManagement />} />
             <Route path="*" element={<h2 className="text-xl font-semibold mb-4">Select a section from the sidebar.</h2>} />
           </Routes>
         </main>
