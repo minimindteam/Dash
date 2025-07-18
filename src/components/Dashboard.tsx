@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Layout/Sidebar';
-import Header from './Layout/Header'; // Import Header
+import Header from './Layout/Header';
 import HomePageManager from "./Sections/HomePageManager";
 import Services from './Sections/Services';
 import Packages from './Sections/Packages';
@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
     const savedSection = localStorage.getItem('activeAdminSection');
     return savedSection || 'home';
   });
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,12 +28,12 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const checkUser = async () => {
-      setLoading(true); // Set loading to true before checking user
+      setLoading(true);
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error || !session) {
         navigate('/login');
       } else {
-        setLoading(false); // Set loading to false after successful check
+        setLoading(false);
       }
     };
     checkUser();
@@ -51,11 +51,36 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center min-h-screen bg-gray-100">
-        <p>Loading dashboard...</p>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        background: '#f0f2f5'
+      }}>
+        <div className="fb-card" style={{ padding: '40px', textAlign: 'center' }}>
+          <div className="fb-spinner" style={{ margin: '0 auto 16px' }}></div>
+          <p style={{ color: '#65676b' }}>Loading dashboard...</p>
+        </div>
       </div>
     );
   }
+
+  const getSectionTitle = () => {
+    const titles = {
+      'home': 'Home Content',
+      'services': 'Services',
+      'packages': 'Packages',
+      'orders': 'Orders',
+      'team': 'Team',
+      'reviews': 'Reviews',
+      'reviews-stats': 'Reviews Stats',
+      'portfolio': 'Portfolio',
+      'messages': 'Messages',
+      'contact': 'Contact Info'
+    };
+    return titles[activeSection as keyof typeof titles] || 'Dashboard';
+  };
 
   const renderSection = () => {
     switch (activeSection) {
@@ -85,14 +110,14 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f0f2f5' }}>
       <Sidebar
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <div className="flex-1 flex flex-col">
-        <Header title="Dashboard" />
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div style={{ flex: 1, marginLeft: '280px' }}>
+        <Header title={getSectionTitle()} />
+        <main style={{ padding: '24px' }}>
           {renderSection()}
         </main>
       </div>
