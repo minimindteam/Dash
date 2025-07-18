@@ -1,10 +1,9 @@
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import React, { type ButtonHTMLAttributes, type ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'success';
   size?: 'sm' | 'md' | 'lg';
-  icon?: LucideIcon;
+  icon?: React.ElementType;
   loading?: boolean;
   as?: 'button' | 'span';
   children?: ReactNode;

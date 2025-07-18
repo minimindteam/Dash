@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../Layout/Header';
 import { Plus, Trash2, Upload, Link2 } from 'lucide-react';
-import { getFullHomePage, updateFullHomePage, uploadImage, deleteHeroImage, deleteHomeStat, deleteHomeService, deleteHomeServicePreview } from '../../utils/api';
+import { getFullHomePage, updateFullHomePage, uploadImage, deleteHeroImage, deleteHomeStat, deleteHomeServicePreview } from '../../utils/api';
 import { supabase } from '../../utils/supabase';
-import { FullHomePage, HomePageContent, HeroImage, HomeStat, HomeServicePreview } from '../../types';
+import { type FullHomePage, type HomePageContent, type HeroImage, type HomeServicePreview } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
 // --- Interface Definitions ---
@@ -13,12 +13,12 @@ interface Stat {
   id?: string;
   number: string;
   label: string;
-  icon_name?: string;
+  icon?: string;
   display_order: number;
 }
 
 interface ImageSource {
-  id: string;
+  id: string | undefined;
   type: 'url' | 'file';
   value: string | File | null;
   preview?: string;
@@ -35,7 +35,14 @@ interface ServicePreview {
 // --- Component ---
 const HomePageManager: React.FC = () => {
   // --- State Management ---
-  const [heroContent, setHeroContent] = useState<HomePageContent>({});
+  const [heroContent, setHeroContent] = useState<HomePageContent>({
+    id: 0,
+    hero_title: '',
+    hero_subtitle: '',
+    hero_description: '',
+    cta_title: '',
+    cta_subtitle: '',
+  });
   const [heroImages, setHeroImages] = useState<ImageSource[]>([]);
   const [stats, setStats] = useState<Stat[]>([]);
   const [servicesPreview, setServicesPreview] = useState<ServicePreview[]>([]);
@@ -48,27 +55,27 @@ const HomePageManager: React.FC = () => {
         const data: FullHomePage = await getFullHomePage();
         setHeroContent({
           id: data.content.id,
-          hero_title: data.content.hero_title,
-          hero_subtitle: data.content.hero_subtitle,
-          hero_description: data.content.hero_description,
-          cta_title: data.content.cta_title,
-          cta_subtitle: data.content.cta_subtitle,
+          hero_title: data.content.hero_title || '',
+          hero_subtitle: data.content.hero_subtitle || '',
+          hero_description: data.content.hero_description || '',
+          cta_title: data.content.cta_title || '',
+          cta_subtitle: data.content.cta_subtitle || '',
         });
         setHeroImages(data.hero_images.map(img => ({
-          id: img.id,
+          id: img.id?.toString(),
           type: 'url',
           value: img.image_url,
           preview: img.image_url,
         })));
         setStats(data.stats.map(stat => ({
-          id: stat.id,
+          id: stat.id?.toString(),
           number: stat.number,
           label: stat.label,
-          icon_name: stat.icon_name,
+          icon: stat.icon,
           display_order: stat.display_order,
         })));
         setServicesPreview(data.services_preview.map(service => ({
-          id: service.id,
+          id: service.id || uuidv4(),
           title: service.title,
           description: service.description,
           display_order: service.display_order,
@@ -143,7 +150,7 @@ const HomePageManager: React.FC = () => {
   };
 
   // Stats Handlers
-  const handleAddStat = () => setStats(prev => [...prev, { id: uuidv4(), number: '', label: '', icon_name: '', display_order: (prev.length > 0 ? Math.max(...prev.map(s => s.display_order || 0)) : 0) + 1 }]);
+  const handleAddStat = () => setStats(prev => [...prev, { id: uuidv4(), number: '', label: '', icon: '', display_order: (prev.length > 0 ? Math.max(...prev.map(s => s.display_order || 0)) : 0) + 1 }]);
   const handleRemoveStat = async (id: string) => {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
@@ -197,7 +204,8 @@ const HomePageManager: React.FC = () => {
           if (img.type === 'file' && img.value instanceof File) {
             const { data: sessionData } = await supabase.auth.getSession();
             if (!sessionData.session) throw new Error("User not authenticated for image upload.");
-            imageUrl = await uploadImage(img.value, sessionData.session.access_token);
+            const uploadedUrl = await uploadImage(img.value, sessionData.session.access_token);
+            if (uploadedUrl) imageUrl = uploadedUrl;
           }
           return { id: img.id || uuidv4(), image_url: imageUrl, display_order: index + 1 };
         })
@@ -209,7 +217,8 @@ const HomePageManager: React.FC = () => {
           if (service.image.type === 'file' && service.image.value instanceof File) {
             const { data: sessionData } = await supabase.auth.getSession();
             if (!sessionData.session) throw new Error("User not authenticated for image upload.");
-            imageUrl = await uploadImage(service.image.value, sessionData.session.access_token);
+            const uploadedUrl = await uploadImage(service.image.value, sessionData.session.access_token);
+            if (uploadedUrl) imageUrl = uploadedUrl;
           }
           return {
             id: service.id || uuidv4(),
@@ -235,13 +244,13 @@ const HomePageManager: React.FC = () => {
           id: stat.id || uuidv4(),
           number: stat.number,
           label: stat.label,
-          icon_name: stat.icon_name,
+          icon: stat.icon,
           display_order: stat.display_order || index + 1,
         })),
         services_preview: uploadedServicesPreview,
       };
 
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) throw new Error("User not authenticated for saving home page data.");
       await updateFullHomePage(homePageData, sessionData.session.access_token);
       alert('Home page data saved successfully!');
@@ -271,7 +280,7 @@ const HomePageManager: React.FC = () => {
             <textarea placeholder="Hero Description" value={heroContent.hero_description || ''} onChange={e => handleInputChange('hero_description', e.target.value)} className="w-full px-3 py-2 border rounded-md" rows={3} />
             <div>
               <h4 className="font-medium mb-2">Background Images</h4>
-              {heroImages.map(image => <ImageEditor key={image.id} image={image} onRemove={() => handleRemoveImageSource(image.id, setHeroImages)} onChange={(field, value) => handleImageSourceChange(image.id, value, setHeroImages, field)} />)}
+              {heroImages.map(image => <ImageEditor key={image.id!} image={image} onRemove={() => handleRemoveImageSource(image.id!, setHeroImages)} onChange={(field, value) => handleImageSourceChange(image.id!, value, setHeroImages, field)} />)}
               <button onClick={() => handleAddImageSource(setHeroImages)} className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 mt-2"><Plus className="w-5 h-5" /><span>Add Image</span></button>
             </div>
           </div>
@@ -285,7 +294,7 @@ const HomePageManager: React.FC = () => {
                     <div key={stat.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-md">
                         <input type="text" placeholder="Number (e.g., 10+)" value={stat.number} onChange={e => handleStatChange(stat.id!, 'number', e.target.value)} className="px-3 py-2 border rounded-md" />
                         <input type="text" placeholder="Label (e.g., Projects Completed)" value={stat.label} onChange={e => handleStatChange(stat.id!, 'label', e.target.value)} className="px-3 py-2 border rounded-md" />
-                        <select value={stat.icon_name || ''} onChange={e => handleStatChange(stat.id!, 'icon_name', e.target.value)} className="px-3 py-2 border rounded-md w-full">
+                        <select value={stat.icon || ''} onChange={e => handleStatChange(stat.id!, 'icon', e.target.value)} className="px-3 py-2 border rounded-md w-full">
                             <option value="">Select Icon</option>
                             <option value="Award">Award</option>
                             <option value="Users">Users</option>
@@ -330,7 +339,7 @@ const HomePageManager: React.FC = () => {
                         <textarea placeholder="Service Description" value={service.description || ''} onChange={e => handleServicePreviewChange(service.id, 'description', e.target.value)} className="w-full px-3 py-2 border rounded-md" rows={2} />
                         <input type="number" placeholder="Display Order" value={service.display_order} onChange={e => handleServicePreviewChange(service.id, 'display_order', parseInt(e.target.value))} className="w-full px-3 py-2 border rounded-md" />
                         <h5 className="font-medium">Service Image</h5>
-                        <ImageEditor image={service.image} onRemove={() => {}} isNested={true} onChange={(field, value) => handleImageSourceChange(service.image.id, value, setServicesPreview, field, true)} />
+                        <ImageEditor image={service.image} onRemove={() => {}} isNested={true} onChange={(field, value) => handleImageSourceChange(service.image.id!, value, setServicesPreview, field, true)} />
                     </div>
                 ))}
             </div>

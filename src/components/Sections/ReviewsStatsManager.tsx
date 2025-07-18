@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../utils/api';
-import { ReviewsStat } from '../../types';
+import { type ReviewsStat } from '../../types';
 import Button from '../Common/Button';
 import Header from '../Layout/Header';
 import { Plus, Trash2 } from 'lucide-react';

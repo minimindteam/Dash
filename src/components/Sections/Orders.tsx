@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Eye, CheckCircle, XCircle, Clock, Trash2, Search, Copy } from 'lucide-react';
+import { Package, Eye, Trash2, Copy } from 'lucide-react';
 import { formatInTimeZone } from 'date-fns-tz';
-import { Order } from '../../types';
+import { type Order } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Modal from '../Common/Modal';
@@ -130,17 +130,6 @@ const Orders: React.FC = () => {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusIcon = (status: Order['status']) => {
-    switch (status) {
-      case 'pending': return <Clock className="w-4 h-4" />;
-      case 'confirmed': return <CheckCircle className="w-4 h-4" />;
-      case 'in-progress': return <Package className="w-4 h-4" />;
-      case 'completed': return <CheckCircle className="w-4 h-4" />;
-      case 'cancelled': return <XCircle className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
     }
   };
 

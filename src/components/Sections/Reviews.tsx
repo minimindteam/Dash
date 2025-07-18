@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Star, CheckCircle, XCircle, Upload } from 'lucide-react';
-import { Review } from '../../types';
+import { type Review } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Modal from '../Common/Modal';
@@ -295,7 +295,7 @@ interface ReviewModalProps {
 
 const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSave, review }) => {
   const [formData, setFormData] = useState({
-    id: 0,
+    id: review?.id || 0,
     name: '',
     designation: '',
     company: '',
@@ -339,7 +339,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSave, revi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ ...formData, id: review?.id });
+    onSave({ ...formData, id: formData.id });
   };
 
   return (

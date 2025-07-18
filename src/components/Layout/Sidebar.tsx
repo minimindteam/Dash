@@ -7,7 +7,6 @@ import {
   Star, 
   Briefcase, 
   Mail, 
-  Image,
   Settings,
   ShoppingCart
 } from 'lucide-react';
@@ -32,10 +31,10 @@ const menuItems = [
 
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => {
   return (
-    <aside className="w-64 bg-white shadow-lg h-screen sticky top-0">
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-        <p className="text-sm text-gray-600 mt-1">Manage your website content</p>
+    <aside className="w-64 bg-gray-800 shadow-xl h-screen sticky top-0">
+      <div className="p-6 border-b border-gray-700">
+        <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
+        <p className="text-sm text-gray-400 mt-1">Manage your website content</p>
       </div>
       
       <nav className="mt-6">
@@ -45,10 +44,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => 
             <button
               key={item.id}
               onClick={() => onSectionChange(item.id)}
-              className={`w-full flex items-center px-6 py-3 text-left hover:bg-blue-50 transition-colors ${
+              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
                 activeSection === item.id
-                  ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600'
-                  : 'text-gray-600 hover:text-blue-600'
+                  ? 'bg-gray-700 text-white border-r-4 border-primary'
+                  : 'text-gray-300 hover:text-white'
               }`}
             >
               <Icon className="w-5 h-5 mr-3" />

@@ -5,6 +5,8 @@ export interface Package {
   price: string;
   features: string[];
   is_popular: boolean;
+  popular?: boolean;
+  duration?: string;
 }
 
 
@@ -88,14 +90,14 @@ export interface HomePageContent {
 }
 
 export interface HeroImage {
-  id?: number;
+  id?: string | number;
   image_url: string;
   display_order: number;
   created_at?: string;
 }
 
 export interface HomeStat {
-  id?: number;
+  id?: string | number;
   number: string;
   label: string;
   icon?: string;
@@ -104,7 +106,7 @@ export interface HomeStat {
 }
 
 export interface HomeServicePreview {
-  id?: number;
+  id?: string;
   title: string;
   description?: string;
   image_url?: string;
@@ -130,5 +132,22 @@ export interface ContactInfo {
     linkedin?: string;
     instagram?: string;
   };
+}
+
+export interface ReviewsStat {
+  id?: string;
+  number: string;
+  label: string;
+  order: number;
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  price?: string;
+  features: string[];
+  cover_image_url?: string;
 }
 

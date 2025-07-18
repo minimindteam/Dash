@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Layout/Sidebar';
+import Header from './Layout/Header'; // Import Header
 import HomePageManager from "./Sections/HomePageManager";
 import Services from './Sections/Services';
 import Packages from './Sections/Packages';
@@ -44,13 +45,13 @@ const Dashboard: React.FC = () => {
     });
 
     return () => {
-      authListener?.data?.subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
   }, [navigate]);
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex flex-1 items-center justify-center min-h-screen bg-gray-100">
         <p>Loading dashboard...</p>
       </div>
     );
@@ -84,14 +85,17 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar 
-        activeSection={activeSection} 
-        onSectionChange={setActiveSection} 
+    <div className="flex min-h-screen bg-gray-100"> {/* Changed bg-gray-50 to bg-gray-100 for a slightly lighter background */}
+      <Sidebar
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
       />
-      <main className="flex-1 flex flex-col">
-        {renderSection()}
-      </main>
+      <div className="flex-1 flex flex-col"> {/* This div will contain header and main content */}
+        <Header title="Dashboard" /> {/* Add Header component here */}
+        <main className="flex-1 overflow-y-auto p-6"> {/* Added p-6 for padding and overflow-y-auto for scrolling */}
+          {renderSection()}
+        </main>
+      </div>
     </div>
   );
 };

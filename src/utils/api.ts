@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
-import { HomePageContentDB, HeroImage, HomeStat, HomeService, FullHomePage } from '../types';
+import { type HomePageContent, type HeroImage, type HomeStat, type HomeServicePreview, type FullHomePage } from '../types';
 
-export const API_URL = 'http://localhost:8000';
+export const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const getFullHomePage = async (): Promise<FullHomePage> => {
   try {
@@ -65,11 +65,17 @@ export const getFullHomePage = async (): Promise<FullHomePage> => {
       services_preview: servicesPreviewData || [],
     };
   } catch (error) {
-    return false;
+    console.error("Error fetching full home page data:", error);
+    return {
+      content: { id: 0, hero_title: '', hero_subtitle: '', hero_description: '', cta_title: '', cta_subtitle: '' },
+      hero_images: [],
+      stats: [],
+      services_preview: [],
+    };
   }
 };
 
-export const getHomePageContent = async (): Promise<HomePageContentDB | null> => {
+export const getHomePageContent = async (): Promise<HomePageContent | null> => {
   const { data, error } = await supabase
     .from('home_content')
     .select('*')
@@ -83,8 +89,8 @@ export const getHomePageContent = async (): Promise<HomePageContentDB | null> =>
   return data && data.length > 0 ? data[0] : null;
 };
 
-export const addHomePageContent = async (content: Omit<HomePageContentDB, 'id' | 'created_at'>, token: string): Promise<HomePageContentDB | null> => {
-  supabase.auth.setSession({ access_token: token });
+export const addHomePageContent = async (content: Omit<HomePageContent, 'id' | 'created_at'>, token: string): Promise<HomePageContent | null> => {
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_content')
     .insert([content])
@@ -98,8 +104,8 @@ export const addHomePageContent = async (content: Omit<HomePageContentDB, 'id' |
   return data;
 };
 
-export const updateHomePageContent = async (content: HomePageContentDB, token: string): Promise<HomePageContentDB | null> => {
-  supabase.auth.setSession({ access_token: token });
+export const updateHomePageContent = async (content: HomePageContent, token: string): Promise<HomePageContent | null> => {
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_content')
     .update(content)
@@ -128,7 +134,7 @@ export const getHeroImages = async (): Promise<HeroImage[]> => {
 };
 
 export const addHeroImage = async (image: Omit<HeroImage, 'id' | 'created_at'>, token: string): Promise<HeroImage | null> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('hero_images')
     .insert([image])
@@ -144,7 +150,7 @@ export const addHeroImage = async (image: Omit<HeroImage, 'id' | 'created_at'>, 
 };
 
 export const updateHeroImage = async (id: string, image: Partial<HeroImage>, token: string): Promise<HeroImage | null> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('hero_images')
     .update(image)
@@ -161,7 +167,7 @@ export const updateHeroImage = async (id: string, image: Partial<HeroImage>, tok
 };
 
 export const deleteHeroImage = async (id: string, token: string): Promise<boolean> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   
   const { error } = await supabase.from('hero_images').delete().eq('id', id);
 
@@ -187,7 +193,7 @@ export const getHomeStats = async (): Promise<HomeStat[]> => {
 };
 
 export const addHomeStat = async (stat: Omit<HomeStat, 'id' | 'created_at'>, token: string): Promise<HomeStat | null> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_stats')
     .insert([stat])
@@ -203,7 +209,7 @@ export const addHomeStat = async (stat: Omit<HomeStat, 'id' | 'created_at'>, tok
 };
 
 export const updateHomeStat = async (id: string, stat: Partial<HomeStat>, token: string): Promise<HomeStat | null> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_stats')
     .update(stat)
@@ -220,7 +226,7 @@ export const updateHomeStat = async (id: string, stat: Partial<HomeStat>, token:
 };
 
 export const deleteHomeStat = async (id: string, token: string): Promise<boolean> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   
   const { error } = await supabase.from('home_stats').delete().eq('id', id);
 
@@ -234,7 +240,7 @@ export const deleteHomeStat = async (id: string, token: string): Promise<boolean
 };
 
 // --- Home Services API ---
-export const getHomeServices = async (): Promise<HomeService[]> => {
+export const getHomeServices = async (): Promise<HomeServicePreview[]> => {
   const { data, error } = await supabase.from('home_services').select('*');
 
   if (error) {
@@ -245,8 +251,8 @@ export const getHomeServices = async (): Promise<HomeService[]> => {
   return data || [];
 };
 
-export const addHomeService = async (service: Omit<HomeService, 'id' | 'created_at'>, token: string): Promise<HomeService | null> => {
-  supabase.auth.setSession({ access_token: token });
+export const addHomeService = async (service: Omit<HomeServicePreview, 'id' | 'created_at'>, token: string): Promise<HomeServicePreview | null> => {
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_services')
     .insert([service])
@@ -261,8 +267,8 @@ export const addHomeService = async (service: Omit<HomeService, 'id' | 'created_
   return data;
 };
 
-export const updateHomeService = async (id: string, service: Partial<HomeService>, token: string): Promise<HomeService | null> => {
-  supabase.auth.setSession({ access_token: token });
+export const updateHomeService = async (id: string, service: Partial<HomeServicePreview>, token: string): Promise<HomeServicePreview | null> => {
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { data, error } = await supabase
     .from('home_services')
     .update(service)
@@ -279,7 +285,7 @@ export const updateHomeService = async (id: string, service: Partial<HomeService
 };
 
 export const deleteHomeService = async (id: string, token: string): Promise<boolean> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { error } = await supabase.from('home_services').delete().eq('id', id);
 
   if (error) {
@@ -291,7 +297,7 @@ export const deleteHomeService = async (id: string, token: string): Promise<bool
 };
 
 export const deleteHomeServicePreview = async (id: string, token: string): Promise<boolean> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   const { error } = await supabase.from('home_services_preview').delete().eq('id', id);
 
   if (error) {
@@ -305,7 +311,7 @@ export const deleteHomeServicePreview = async (id: string, token: string): Promi
 
 // New function to update the full home page
 export const updateFullHomePage = async (data: FullHomePage, token: string): Promise<boolean> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   try {
     // Update home_content
     if (data.content.id) {
@@ -359,7 +365,7 @@ export const updateFullHomePage = async (data: FullHomePage, token: string): Pro
     }
     
     if (data.stats.length > 0) {
-      const statsToInsert = data.stats.map(({ id, icon_name, ...rest }) => ({ ...rest, icon: icon_name }));
+      const statsToInsert = data.stats.map(({ id, icon, ...rest }) => ({ ...rest, icon }));
       const { error: insertStatsError } = await supabase.from('home_stats').insert(statsToInsert);
       if (insertStatsError) {
         
@@ -387,13 +393,14 @@ export const updateFullHomePage = async (data: FullHomePage, token: string): Pro
 
     return true;
   } catch (error) {
+    console.error("Error fetching full home page data:", error);
     return false;
   }
 };
 
 // --- Image Upload API ---
 export const uploadImage = async (file: File, token: string): Promise<string | null> => {
-  supabase.auth.setSession({ access_token: token });
+  supabase.auth.setSession({ access_token: token, refresh_token: token });
   
   const fileExtension = file.name.split('.').pop();
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExtension}`;

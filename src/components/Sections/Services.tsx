@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Globe, Smartphone, Monitor, Zap, Upload } from 'lucide-react';
-import { Service } from '../../types';
+import { type Service } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Modal from '../Common/Modal';
@@ -176,7 +176,7 @@ const Services: React.FC = () => {
                     <div>
                       <h5 className="text-sm font-medium text-gray-900 mb-2">Features:</h5>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        {features.map((feature, index) => (
+                        {features.map((feature: string, index: number) => (
                           <li key={index} className="flex items-center">
                             <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mr-2"></span>
                             {feature}

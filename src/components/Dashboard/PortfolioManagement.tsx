@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import Modal from '../Common/Modal'; // Import the Modal component
 
 const API_URL = 'https://minimind-backend.onrender.com';
 
@@ -31,6 +32,15 @@ function PortfolioManagement() {
   const [newProjectImageFile, setNewProjectImageFile] = useState<File | null>(null);
   const [newProjectCategoryId, setNewProjectCategoryId] = useState<number | ''>('');
   const [isUploading, setIsUploading] = useState(false);
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentProjectToEdit, setCurrentProjectToEdit] = useState<PortfolioProject | null>(null);
+  const [editProjectTitle, setEditProjectTitle] = useState('');
+  const [editProjectDescription, setEditProjectDescription] = useState('');
+  const [editProjectImageFile, setEditProjectImageFile] = useState<File | null>(null);
+  const [editProjectCategoryId, setEditProjectCategoryId] = useState<number | ''>('');
+
 
   const fetchCategoriesAndProjects = async () => {
     setLoading(true);
@@ -264,6 +274,68 @@ function PortfolioManagement() {
     }
   };
 
+  const handleEditProject = (project: PortfolioProject) => {
+    setCurrentProjectToEdit(project);
+    setEditProjectTitle(project.title);
+    setEditProjectDescription(project.description);
+    setEditProjectCategoryId(project.category_id);
+    setEditProjectImageFile(null); // Reset image file for edit
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateProject = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!currentProjectToEdit) return;
+
+    setError('');
+    setMessage('Updating project...');
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setError('Authentication required.');
+      return;
+    }
+
+    let imageUrl = currentProjectToEdit.image_url;
+    if (editProjectImageFile) {
+      const uploadedUrl = await uploadImage(editProjectImageFile);
+      if (!uploadedUrl) {
+        setError('Could not upload new image. Please try again.');
+        setMessage('');
+        return;
+      }
+      imageUrl = uploadedUrl;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/portfolio-projects/${currentProjectToEdit.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: editProjectTitle,
+          description: editProjectDescription,
+          image_url: imageUrl,
+          category_id: Number(editProjectCategoryId),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to update project.');
+      }
+      setMessage('Project updated successfully!');
+      setIsEditModalOpen(false);
+      setCurrentProjectToEdit(null);
+      fetchCategoriesAndProjects(); // Refresh list
+    } catch (err: any) {
+      setError(err.message);
+      setMessage('');
+    }
+  };
+
   if (loading) return <p>Loading portfolio data...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
@@ -372,7 +444,12 @@ function PortfolioManagement() {
               <p className="text-gray-600 text-sm">Category: {categories.find(c => c.id === proj.category_id)?.name}</p>
               <p className="text-gray-700 text-sm mb-2">{proj.description}</p>
               <div className="flex justify-end mt-4">
-                {/* <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">Edit</button> */}
+                <button
+                  onClick={() => handleEditProject(proj)}
+                  className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                >
+                  Edit
+                </button>
                 <button
                   onClick={() => handleDeleteProject(proj.id)}
                   className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded"
@@ -386,6 +463,74 @@ function PortfolioManagement() {
       </div>
       {message && <p className="mt-4 text-sm text-green-500">{message}</p>}
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+
+      {/* Edit Project Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit Project"
+      >
+        {currentProjectToEdit && (
+          <form onSubmit={handleUpdateProject}>
+            <div className="mb-4">
+              <label htmlFor="editProjectTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+              <input
+                type="text"
+                id="editProjectTitle"
+                value={editProjectTitle}
+                onChange={(e) => setEditProjectTitle(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="editProjectDescription" className="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+              <textarea
+                id="editProjectDescription"
+                value={editProjectDescription}
+                onChange={(e) => setEditProjectDescription(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 h-24"
+                required
+              ></textarea>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="editProjectImage" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+              <input
+                type="file"
+                id="editProjectImage"
+                onChange={(e) => setEditProjectImageFile(e.target.files ? e.target.files[0] : null)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                accept="image/*"
+              />
+              {currentProjectToEdit.image_url && (
+                <p className="text-sm text-gray-500 mt-1">Current image: <a href={currentProjectToEdit.image_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">View</a></p>
+              )}
+            </div>
+            <div className="mb-4">
+              <label htmlFor="editProjectCategory" className="block text-gray-700 text-sm font-bold mb-2">Category:</label>
+              <select
+                id="editProjectCategory"
+                value={editProjectCategoryId}
+                onChange={(e) => setEditProjectCategoryId(Number(e.target.value))}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                required
+              >
+                <option value="">Select a Category</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="bg-primary hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+              disabled={isUploading}
+            >
+              {isUploading ? 'Updating...' : 'Update Project'}
+            </button>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }

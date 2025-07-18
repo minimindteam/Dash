@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Users, Linkedin, Twitter, Globe, Upload } from 'lucide-react';
-import { TeamMember } from '../../types';
+import { type TeamMember } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Modal from '../Common/Modal';

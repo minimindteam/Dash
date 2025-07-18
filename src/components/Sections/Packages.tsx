@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Package, Star } from 'lucide-react';
-import { Package as PackageType } from '../../types';
+import { type Package as PackageType } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Modal from '../Common/Modal';

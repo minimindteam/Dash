@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Mail, Phone, MapPin, Clock, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
-import { ContactInfo as ContactInfoType } from '../../types';
+import { Save, Mail, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { type ContactInfo as ContactInfoType } from '../../types';
 import { API_URL } from '../../utils/api';
 import Button from '../Common/Button';
 import Header from '../Layout/Header';
@@ -10,7 +10,7 @@ const ContactInfo: React.FC = () => {
     email: '',
     phone: '',
     address: '',
-    business_hours: '',
+    businessHours: '',
     socialLinks: {
       facebook: '',
       linkedin: '',
@@ -144,8 +144,8 @@ const ContactInfo: React.FC = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={contactInfo.business_hours}
-                    onChange={(e) => setContactInfo(prev => ({ ...prev, business_hours: e.target.value }))}
+                    value={contactInfo.businessHours}
+                    onChange={(e) => setContactInfo(prev => ({ ...prev, businessHours: e.target.value }))}
                     placeholder="Mon-Fri 9AM-6PM"
                   />
                 </div>
