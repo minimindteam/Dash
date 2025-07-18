@@ -85,14 +85,14 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100"> {/* Changed bg-gray-50 to bg-gray-100 for a slightly lighter background */}
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30">
       <Sidebar
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <div className="flex-1 flex flex-col"> {/* This div will contain header and main content */}
-        <Header title="Dashboard" /> {/* Add Header component here */}
-        <main className="flex-1 overflow-y-auto p-6"> {/* Added p-6 for padding and overflow-y-auto for scrolling */}
+      <div className="flex-1 flex flex-col">
+        <Header title="Dashboard" />
+        <main className="flex-1 overflow-y-auto p-6 space-y-6">
           {renderSection()}
         </main>
       </div>
