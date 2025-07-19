@@ -16,75 +16,25 @@ const Orders: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Dummy data for testing UI
-  const dummyOrders = [
-    {
-      order_id: 'ORD-123456-ABC123',
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+1234567890',
-      company: 'Tech Solutions Inc',
-      message: 'Looking for a complete website redesign with modern features',
-      budget: '$5,000 - $10,000',
-      timeline: '2-3 months',
-      package_name: 'Professional Package',
-      package_price: '$2,499',
-      status: 'pending' as const,
-      created_at: new Date().toISOString()
-    },
-    {
-      order_id: 'ORD-789012-DEF456',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '+0987654321',
-      company: 'Creative Agency',
-      message: 'Need a mobile app for our business',
-      budget: '$10,000+',
-      timeline: '3-4 months',
-      package_name: 'Enterprise Package',
-      package_price: '$4,999',
-      status: 'in-progress' as const,
-      created_at: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-      order_id: 'ORD-345678-GHI789',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      phone: '+1122334455',
-      company: 'Startup Co',
-      message: 'Simple website for our startup',
-      budget: '$1,000 - $3,000',
-      timeline: '1 month',
-      package_name: 'Starter Package',
-      package_price: '$999',
-      status: 'completed' as const,
-      created_at: new Date(Date.now() - 172800000).toISOString()
-    }
-  ];
-
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      // Use dummy data for now to test UI
-      setOrders(dummyOrders);
-      
-      // Uncomment this when Supabase is working properly
-      // const token = localStorage.getItem('access_token');
-      // if (!token) {
-      //   setError('Authentication required.');
-      //   setLoading(false);
-      //   return;
-      // }
-      // const response = await fetch(`${API_URL}/orders`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      // });
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch orders');
-      // }
-      // const data: Order[] = await response.json();
-      // setOrders(data);
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setError('Authentication required.');
+        setLoading(false);
+        return;
+      }
+      const response = await fetch(`${API_URL}/orders`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const data: Order[] = await response.json();
+      setOrders(data);
     } catch (err: any) {
       setError(err.message);
     } finally {

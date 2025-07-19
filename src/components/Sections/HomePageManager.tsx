@@ -6,31 +6,6 @@ import { supabase } from '../../utils/supabase';
 import { type FullHomePage, type HomePageContent, type HeroImage, type HomeServicePreview } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Dummy data for testing UI
-const DUMMY_DATA = {
-  content: {
-    id: 1,
-    hero_title: 'Welcome to Our Amazing Platform',
-    hero_subtitle: 'Build something incredible today',
-    hero_description: 'Transform your ideas into reality with our cutting-edge tools and services.',
-    cta_title: 'Ready to Get Started?',
-    cta_subtitle: 'Join thousands of satisfied customers',
-  },
-  hero_images: [
-    { id: '1', image_url: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg', display_order: 1 },
-    { id: '2', image_url: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg', display_order: 2 },
-  ],
-  stats: [
-    { id: '1', number: '100+', label: 'Happy Clients', icon: 'Users', display_order: 1 },
-    { id: '2', number: '50+', label: 'Projects Completed', icon: 'Briefcase', display_order: 2 },
-    { id: '3', number: '5+', label: 'Years Experience', icon: 'Award', display_order: 3 },
-  ],
-  services_preview: [
-    { id: '1', title: 'Web Development', description: 'Custom websites and applications', image_url: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg', display_order: 1 },
-    { id: '2', title: 'Mobile Apps', description: 'iOS and Android applications', image_url: 'https://images.pexels.com/photos/147413/twitter-facebook-together-exchange-of-information-147413.jpeg', display_order: 2 },
-  ]
-};
-
 // --- Interface Definitions ---
 
 
@@ -77,11 +52,7 @@ const HomePageManager: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Use dummy data for now to test UI
-        const data: FullHomePage = DUMMY_DATA;
-        
-        // Uncomment this line when Supabase is working properly
-        // const data: FullHomePage = await getFullHomePage();
+        const data: FullHomePage = await getFullHomePage();
         
         setHeroContent({
           id: data.content.id,

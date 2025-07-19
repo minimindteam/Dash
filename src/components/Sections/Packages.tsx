@@ -14,50 +14,15 @@ const Packages: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Dummy data for testing UI
-  const dummyPackages = [
-    {
-      id: '1',
-      title: 'Starter Package',
-      description: 'Perfect for small businesses and startups',
-      price: '$999',
-      features: ['5 Pages Website', 'Responsive Design', 'Basic SEO', 'Contact Form', '1 Month Support'],
-      is_popular: false,
-      duration: '2-3 weeks'
-    },
-    {
-      id: '2',
-      title: 'Professional Package',
-      description: 'Ideal for growing businesses with advanced needs',
-      price: '$2,499',
-      features: ['10 Pages Website', 'Custom Design', 'Advanced SEO', 'E-commerce Ready', 'Analytics Setup', '3 Months Support'],
-      is_popular: true,
-      duration: '4-6 weeks'
-    },
-    {
-      id: '3',
-      title: 'Enterprise Package',
-      description: 'Complete solution for large organizations',
-      price: '$4,999',
-      features: ['Unlimited Pages', 'Custom Development', 'Full SEO Suite', 'E-commerce Platform', 'CMS Integration', '6 Months Support'],
-      is_popular: false,
-      duration: '8-12 weeks'
-    }
-  ];
-
   const fetchPackages = async () => {
     setLoading(true);
     try {
-      // Use dummy data for now to test UI
-      setPackages(dummyPackages);
-      
-      // Uncomment this when Supabase is working properly
-      // const response = await fetch(`${API_URL}/packages`);
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch packages');
-      // }
-      // const data: PackageType[] = await response.json();
-      // setPackages(data);
+      const response = await fetch(`${API_URL}/packages`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch packages');
+      }
+      const data: PackageType[] = await response.json();
+      setPackages(data);
     } catch (err: any) {
       setError(err.message);
     } finally {

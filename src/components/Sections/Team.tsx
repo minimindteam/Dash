@@ -14,56 +14,15 @@ const Team: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Dummy data for testing UI
-  const dummyTeam = [
-    {
-      id: '1',
-      name: 'John Smith',
-      designation: 'Lead Developer',
-      image_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
-      bio: 'Experienced full-stack developer with 8+ years in web development',
-      specialties: ['React', 'Node.js', 'TypeScript', 'AWS'],
-      social_url_a: 'https://linkedin.com/in/johnsmith',
-      social_url_b: 'https://twitter.com/johnsmith',
-      social_url_c: 'https://github.com/johnsmith'
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      designation: 'UI/UX Designer',
-      image_url: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg',
-      bio: 'Creative designer passionate about user experience and modern design',
-      specialties: ['Figma', 'Adobe Creative Suite', 'User Research', 'Prototyping'],
-      social_url_a: 'https://linkedin.com/in/sarahjohnson',
-      social_url_b: 'https://dribbble.com/sarahjohnson',
-      social_url_c: 'https://behance.net/sarahjohnson'
-    },
-    {
-      id: '3',
-      name: 'Mike Chen',
-      designation: 'Project Manager',
-      image_url: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg',
-      bio: 'Agile project manager ensuring smooth delivery of all projects',
-      specialties: ['Agile', 'Scrum', 'Team Leadership', 'Client Relations'],
-      social_url_a: 'https://linkedin.com/in/mikechen',
-      social_url_b: 'https://twitter.com/mikechen',
-      social_url_c: 'https://mikechen.dev'
-    }
-  ];
-
   const fetchTeamMembers = async () => {
     setLoading(true);
     try {
-      // Use dummy data for now to test UI
-      setTeam(dummyTeam);
-      
-      // Uncomment this when Supabase is working properly
-      // const response = await fetch(`${API_URL}/team-members`);
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch team members');
-      // }
-      // const data: TeamMember[] = await response.json();
-      // setTeam(data);
+      const response = await fetch(`${API_URL}/team-members`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch team members');
+      }
+      const data: TeamMember[] = await response.json();
+      setTeam(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -175,41 +134,57 @@ const Team: React.FC = () => {
             <p className="text-red-600">Error: {error}</p>
           </div>
         ) : (
-          <div className="fb-grid fb-grid-4 gap-6">
+          <div className="fb-grid fb-grid-4">
             {filteredTeam.map((member) => (
-              <div key={member.id} className="fb-card p-6 text-center hover:shadow-lg transition-shadow">
+              <div key={member.id} className="fb-card" style={{ textAlign: 'center' }}>
                 <img
                   src={member.image_url}
                   alt={member.name}
-                  className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-gray-100"
+                  className="fb-image-profile"
+                  style={{ margin: '0 auto 16px' }}
                 />
-                <h4 className="fb-font-semibold text-gray-900 text-base mb-1">{member.name}</h4>
-                <p className="fb-text-small text-blue-600 fb-font-semibold mb-3">{member.designation}</p>
-                <p className="fb-text-muted fb-text-small mb-4 line-clamp-3">{member.bio}</p>
+                <h4 className="fb-font-semibold fb-mb-1" style={{ color: '#1c1e21', fontSize: '16px' }}>{member.name}</h4>
+                <p className="fb-text-small fb-font-semibold fb-mb-3" style={{ color: '#1877f2' }}>{member.designation}</p>
+                <p className="fb-text-muted fb-text-small fb-mb-4">{member.bio}</p>
                 {member.specialties && member.specialties.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-4 justify-center">
+                  <div className="fb-mb-4" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
                     {member.specialties.map((specialty, idx) => (
-                      <span key={idx} className="fb-badge-info fb-text-small">
+                      <span key={idx} className="fb-badge fb-badge-info fb-text-small">
                         {specialty}
                       </span>
                     ))}
                   </div>
                 )}
                 
-                <div className="fb-flex fb-justify-center fb-space-x-3 mb-4">
+                <div className="fb-flex fb-justify-center fb-space-x-3 fb-mb-4">
                   {member.social_url_a && (
-                    <a href={member.social_url_a} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                      <Linkedin className="w-5 h-5" />
+                    <a href={member.social_url_a} target="_blank" rel="noopener noreferrer" style={{
+                      padding: '8px',
+                      color: '#65676b',
+                      borderRadius: '50%',
+                      textDecoration: 'none'
+                    }}>
+                      <Linkedin style={{ width: '20px', height: '20px' }} />
                     </a>
                   )}
                   {member.social_url_b && (
-                    <a href={member.social_url_b} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-50 rounded-full transition-colors">
-                      <Twitter className="w-5 h-5" />
+                    <a href={member.social_url_b} target="_blank" rel="noopener noreferrer" style={{
+                      padding: '8px',
+                      color: '#65676b',
+                      borderRadius: '50%',
+                      textDecoration: 'none'
+                    }}>
+                      <Twitter style={{ width: '20px', height: '20px' }} />
                     </a>
                   )}
                   {member.social_url_c && (
-                    <a href={member.social_url_c} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors">
-                      <Globe className="w-5 h-5" />
+                    <a href={member.social_url_c} target="_blank" rel="noopener noreferrer" style={{
+                      padding: '8px',
+                      color: '#65676b',
+                      borderRadius: '50%',
+                      textDecoration: 'none'
+                    }}>
+                      <Globe style={{ width: '20px', height: '20px' }} />
                     </a>
                   )}
                 </div>
@@ -220,15 +195,15 @@ const Team: React.FC = () => {
                       setEditingMember(member);
                       setIsModalOpen(true);
                     }}
-                    className="fb-btn-secondary fb-flex fb-items-center"
+                    className="fb-btn-secondary"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit style={{ width: '16px', height: '16px' }} />
                   </button>
                   <button
                     onClick={() => handleDeleteMember(member.id)}
-                    className="fb-btn-danger fb-flex fb-items-center"
+                    className="fb-btn-danger"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 style={{ width: '16px', height: '16px' }} />
                   </button>
                 </div>
               </div>
@@ -237,10 +212,10 @@ const Team: React.FC = () => {
         )}
 
         {filteredTeam.length === 0 && !loading && !error && (
-          <div className="fb-card p-12 text-center">
-            <Users className="w-16 h-16 fb-text-muted mx-auto mb-4" />
-            <h3 className="text-lg fb-font-semibold text-gray-900 mb-2">No team members found</h3>
-            <p className="fb-text-muted">Get started by adding your first team member</p>
+          <div className="fb-empty-state">
+            <Users />
+            <h3>No team members found</h3>
+            <p>Get started by adding your first team member</p>
           </div>
         )}
       </div>

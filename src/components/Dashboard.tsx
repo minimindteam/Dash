@@ -110,14 +110,14 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f0f2f5' }}>
+    <div className="fb-flex" style={{ minHeight: '100vh', background: '#f0f2f5' }}>
       <Sidebar
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <div style={{ flex: 1, marginLeft: '280px' }}>
+      <div className="fb-content">
         <Header title={getSectionTitle()} />
-        <main style={{ padding: '24px' }}>
+        <main className="fb-main">
           {renderSection()}
         </main>
       </div>
