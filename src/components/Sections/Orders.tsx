@@ -16,31 +16,75 @@ const Orders: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Dummy data for testing UI
+  const dummyOrders = [
+    {
+      order_id: 'ORD-123456-ABC123',
+      name: 'John Doe',
+      email: 'john@example.com',
+      phone: '+1234567890',
+      company: 'Tech Solutions Inc',
+      message: 'Looking for a complete website redesign with modern features',
+      budget: '$5,000 - $10,000',
+      timeline: '2-3 months',
+      package_name: 'Professional Package',
+      package_price: '$2,499',
+      status: 'pending' as const,
+      created_at: new Date().toISOString()
+    },
+    {
+      order_id: 'ORD-789012-DEF456',
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      phone: '+0987654321',
+      company: 'Creative Agency',
+      message: 'Need a mobile app for our business',
+      budget: '$10,000+',
+      timeline: '3-4 months',
+      package_name: 'Enterprise Package',
+      package_price: '$4,999',
+      status: 'in-progress' as const,
+      created_at: new Date(Date.now() - 86400000).toISOString()
+    },
+    {
+      order_id: 'ORD-345678-GHI789',
+      name: 'Mike Johnson',
+      email: 'mike@example.com',
+      phone: '+1122334455',
+      company: 'Startup Co',
+      message: 'Simple website for our startup',
+      budget: '$1,000 - $3,000',
+      timeline: '1 month',
+      package_name: 'Starter Package',
+      package_price: '$999',
+      status: 'completed' as const,
+      created_at: new Date(Date.now() - 172800000).toISOString()
+    }
+  ];
+
   const fetchOrders = async () => {
     setLoading(true);
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      setError('Authentication required.');
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch(`${API_URL}/orders`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
-      }
-      const data: Order[] = await response.json();
-      const sortedData = data.sort((a, b) => {
-        const timeA = parseInt(a.order_id.split('_')[1]);
-        const timeB = parseInt(b.order_id.split('_')[1]);
-        return timeB - timeA;
-      });
-      setOrders(sortedData);
+      // Use dummy data for now to test UI
+      setOrders(dummyOrders);
+      
+      // Uncomment this when Supabase is working properly
+      // const token = localStorage.getItem('access_token');
+      // if (!token) {
+      //   setError('Authentication required.');
+      //   setLoading(false);
+      //   return;
+      // }
+      // const response = await fetch(`${API_URL}/orders`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`,
+      //   },
+      // });
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch orders');
+      // }
+      // const data: Order[] = await response.json();
+      // setOrders(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -137,21 +181,21 @@ const Orders: React.FC = () => {
   const inProgressCount = orders.filter(order => order.status === 'in-progress').length;
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-gray-50">
       <Header title="Orders" onSearch={setSearchQuery} />
       
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="fb-flex fb-justify-between fb-items-center mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Order Management</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="text-xl fb-font-bold text-gray-900">Order Management</h3>
+            <p className="fb-text-muted fb-text-small">
               {pendingCount > 0 && `${pendingCount} pending orders`}
               {pendingCount > 0 && inProgressCount > 0 && ', '}
               {inProgressCount > 0 && `${inProgressCount} in progress`}
             </p>
           </div>
           <select
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="fb-select"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
           >
@@ -165,88 +209,94 @@ const Orders: React.FC = () => {
         </div>
 
         {loading ? (
-          <p>Loading orders...</p>
+          <div className="fb-flex fb-items-center fb-justify-center py-12">
+            <div className="fb-spinner"></div>
+            <span className="ml-2 fb-text-muted">Loading orders...</span>
+          </div>
         ) : error ? (
-          <p className="text-red-500">Error: {error}</p>
+          <div className="fb-card p-6 text-center">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="fb-card overflow-hidden">
             {filteredOrders.length === 0 ? (
               <div className="text-center py-12">
-                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No orders found</p>
+                <Package className="w-16 h-16 fb-text-muted mx-auto mb-4" />
+                <h3 className="text-lg fb-font-semibold text-gray-900 mb-2">No orders found</h3>
+                <p className="fb-text-muted">Orders will appear here when customers place them</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                <table className="fb-table">
+                  <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Order ID
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Customer
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Package
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Price
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Budget
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Timeline
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Order Age
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th>
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody>
                     {filteredOrders.map((order) => (
-                      <tr key={order.order_id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-mono text-gray-900">{order.order_id}</span>
+                      <tr key={order.order_id}>
+                        <td>
+                          <div className="fb-flex fb-items-center fb-space-x-2">
+                            <span className="fb-text-small font-mono text-gray-900">{order.order_id}</span>
                             <button
                               onClick={() => copyOrderId(order.order_id)}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-gray-400 hover:text-gray-600 p-1"
                               title="Copy Order ID"
                             >
                               <Copy className="w-3 h-3" />
                             </button>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td>
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{order.name}</div>
-                            <div className="text-sm text-gray-500">{order.email}</div>
+                            <div className="fb-text-small fb-font-semibold text-gray-900">{order.name}</div>
+                            <div className="fb-text-small fb-text-muted">{order.email}</div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{order.package_name}</div>
+                        <td>
+                          <div className="fb-text-small text-gray-900">{order.package_name}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{order.package_price}</div>
+                        <td>
+                          <div className="fb-text-small fb-font-semibold text-gray-900">{order.package_price}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{order.budget}</div>
+                        <td>
+                          <div className="fb-text-small text-gray-900">{order.budget}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{order.timeline}</div>
+                        <td>
+                          <div className="fb-text-small text-gray-900">{order.timeline}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td>
                           <select
                             value={order.status}
                             onChange={(e) => handleStatusChange(order.order_id, e.target.value as Order['status'])}
-                            className={`text-xs px-2 py-1 rounded-full border-0 focus:ring-2 focus:ring-blue-500 ${getStatusColor(order.status)}`}
+                            className={`fb-badge ${getStatusColor(order.status)} border-0 cursor-pointer`}
                           >
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
@@ -255,24 +305,26 @@ const Orders: React.FC = () => {
                             <option value="cancelled">Cancelled</option>
                           </select>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {order.order_id.includes('_') ? formatInTimeZone(new Date(parseInt(order.order_id.split('_')[1])), 'Asia/Dhaka', 'MMM dd, yyyy, hh:mm a') : 'N/A'}
+                        <td>
+                          <div className="fb-text-small fb-text-muted">
+                            {new Date(order.created_at).toLocaleDateString()}
+                          </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex items-center space-x-2">
+                        <td>
+                          <div className="fb-flex fb-items-center fb-space-x-2">
                             <button
                               onClick={() => {
                                 setSelectedOrder(order);
                                 setIsModalOpen(true);
                               }}
-                              className="text-blue-600 hover:text-blue-800"
+                              className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDeleteOrder(order.order_id)}
-                              className="text-red-600 hover:text-red-800"
+                              className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
                               title="Delete Order"
                             >
                               <Trash2 className="w-4 h-4" />

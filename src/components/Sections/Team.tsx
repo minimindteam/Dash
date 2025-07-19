@@ -14,15 +14,56 @@ const Team: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Dummy data for testing UI
+  const dummyTeam = [
+    {
+      id: '1',
+      name: 'John Smith',
+      designation: 'Lead Developer',
+      image_url: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+      bio: 'Experienced full-stack developer with 8+ years in web development',
+      specialties: ['React', 'Node.js', 'TypeScript', 'AWS'],
+      social_url_a: 'https://linkedin.com/in/johnsmith',
+      social_url_b: 'https://twitter.com/johnsmith',
+      social_url_c: 'https://github.com/johnsmith'
+    },
+    {
+      id: '2',
+      name: 'Sarah Johnson',
+      designation: 'UI/UX Designer',
+      image_url: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg',
+      bio: 'Creative designer passionate about user experience and modern design',
+      specialties: ['Figma', 'Adobe Creative Suite', 'User Research', 'Prototyping'],
+      social_url_a: 'https://linkedin.com/in/sarahjohnson',
+      social_url_b: 'https://dribbble.com/sarahjohnson',
+      social_url_c: 'https://behance.net/sarahjohnson'
+    },
+    {
+      id: '3',
+      name: 'Mike Chen',
+      designation: 'Project Manager',
+      image_url: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg',
+      bio: 'Agile project manager ensuring smooth delivery of all projects',
+      specialties: ['Agile', 'Scrum', 'Team Leadership', 'Client Relations'],
+      social_url_a: 'https://linkedin.com/in/mikechen',
+      social_url_b: 'https://twitter.com/mikechen',
+      social_url_c: 'https://mikechen.dev'
+    }
+  ];
+
   const fetchTeamMembers = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/team-members`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch team members');
-      }
-      const data: TeamMember[] = await response.json();
-      setTeam(data);
+      // Use dummy data for now to test UI
+      setTeam(dummyTeam);
+      
+      // Uncomment this when Supabase is working properly
+      // const response = await fetch(`${API_URL}/team-members`);
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch team members');
+      // }
+      // const data: TeamMember[] = await response.json();
+      // setTeam(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -106,77 +147,86 @@ const Team: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-gray-50">
       <Header title="Team" onSearch={setSearchQuery} />
       
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="fb-flex fb-justify-between fb-items-center mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Manage Team</h3>
-            <p className="text-sm text-gray-600">Add, edit, or remove team members</p>
+            <h3 className="text-xl fb-font-bold text-gray-900">Manage Team</h3>
+            <p className="fb-text-muted fb-text-small">Add, edit, or remove team members</p>
           </div>
-          <Button
+          <button
             onClick={() => setIsModalOpen(true)}
-            icon={Plus}
+            className="fb-btn fb-flex fb-items-center fb-space-x-2"
           >
+            <Plus className="w-4 h-4" />
             Add Team Member
-          </Button>
+          </button>
         </div>
 
         {loading ? (
-          <p>Loading team members...</p>
+          <div className="fb-flex fb-items-center fb-justify-center py-12">
+            <div className="fb-spinner"></div>
+            <span className="ml-2 fb-text-muted">Loading team members...</span>
+          </div>
         ) : error ? (
-          <p className="text-red-500">Error: {error}</p>
+          <div className="fb-card p-6 text-center">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
         ) : (
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="fb-grid fb-grid-4 gap-6">
             {filteredTeam.map((member) => (
-              <div key={member.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center">
+              <div key={member.id} className="fb-card p-6 text-center hover:shadow-lg transition-shadow">
                 <img
                   src={member.image_url}
                   alt={member.name}
-                  className="w-20 h-20 rounded-full object-cover mx-auto mb-3"
+                  className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-gray-100"
                 />
-                <h4 className="font-semibold text-gray-900 text-base truncate">{member.name}</h4>
-                <p className="text-sm text-blue-600 font-medium truncate">{member.designation}</p>
-                <p className="text-gray-600 text-sm mt-2 line-clamp-3">{member.bio}</p>
+                <h4 className="fb-font-semibold text-gray-900 text-base mb-1">{member.name}</h4>
+                <p className="fb-text-small text-blue-600 fb-font-semibold mb-3">{member.designation}</p>
+                <p className="fb-text-muted fb-text-small mb-4 line-clamp-3">{member.bio}</p>
                 {member.specialties && member.specialties.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="flex flex-wrap gap-1 mb-4 justify-center">
                     {member.specialties.map((specialty, idx) => (
-                      <span key={idx} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                      <span key={idx} className="fb-badge-info fb-text-small">
                         {specialty}
                       </span>
                     ))}
                   </div>
                 )}
                 
-                <div className="flex justify-center space-x-3 mt-4">
+                <div className="fb-flex fb-justify-center fb-space-x-3 mb-4">
                   {member.social_url_a && (
-                    <a href={member.social_url_a} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600">
+                    <a href={member.social_url_a} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
                       <Linkedin className="w-5 h-5" />
                     </a>
                   )}
                   {member.social_url_b && (
-                    <a href={member.social_url_b} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-400">
+                    <a href={member.social_url_b} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-blue-400 hover:bg-blue-50 rounded-full transition-colors">
                       <Twitter className="w-5 h-5" />
                     </a>
                   )}
                   {member.social_url_c && (
-                    <a href={member.social_url_c} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-purple-600">
+                    <a href={member.social_url_c} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors">
                       <Globe className="w-5 h-5" />
                     </a>
                   )}
+                </div>
+                
+                <div className="fb-flex fb-justify-center fb-space-x-2">
                   <button
                     onClick={() => {
                       setEditingMember(member);
                       setIsModalOpen(true);
                     }}
-                    className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors"
+                    className="fb-btn-secondary fb-flex fb-items-center"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteMember(member.id)}
-                    className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors"
+                    className="fb-btn-danger fb-flex fb-items-center"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -187,9 +237,10 @@ const Team: React.FC = () => {
         )}
 
         {filteredTeam.length === 0 && !loading && !error && (
-          <div className="text-center py-12">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No team members found</p>
+          <div className="fb-card p-12 text-center">
+            <Users className="w-16 h-16 fb-text-muted mx-auto mb-4" />
+            <h3 className="text-lg fb-font-semibold text-gray-900 mb-2">No team members found</h3>
+            <p className="fb-text-muted">Get started by adding your first team member</p>
           </div>
         )}
       </div>

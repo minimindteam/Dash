@@ -14,15 +14,50 @@ const Packages: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Dummy data for testing UI
+  const dummyPackages = [
+    {
+      id: '1',
+      title: 'Starter Package',
+      description: 'Perfect for small businesses and startups',
+      price: '$999',
+      features: ['5 Pages Website', 'Responsive Design', 'Basic SEO', 'Contact Form', '1 Month Support'],
+      is_popular: false,
+      duration: '2-3 weeks'
+    },
+    {
+      id: '2',
+      title: 'Professional Package',
+      description: 'Ideal for growing businesses with advanced needs',
+      price: '$2,499',
+      features: ['10 Pages Website', 'Custom Design', 'Advanced SEO', 'E-commerce Ready', 'Analytics Setup', '3 Months Support'],
+      is_popular: true,
+      duration: '4-6 weeks'
+    },
+    {
+      id: '3',
+      title: 'Enterprise Package',
+      description: 'Complete solution for large organizations',
+      price: '$4,999',
+      features: ['Unlimited Pages', 'Custom Development', 'Full SEO Suite', 'E-commerce Platform', 'CMS Integration', '6 Months Support'],
+      is_popular: false,
+      duration: '8-12 weeks'
+    }
+  ];
+
   const fetchPackages = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/packages`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch packages');
-      }
-      const data: PackageType[] = await response.json();
-      setPackages(data);
+      // Use dummy data for now to test UI
+      setPackages(dummyPackages);
+      
+      // Uncomment this when Supabase is working properly
+      // const response = await fetch(`${API_URL}/packages`);
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch packages');
+      // }
+      // const data: PackageType[] = await response.json();
+      // setPackages(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -106,80 +141,90 @@ const Packages: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-gray-50">
       <Header title="Packages" onSearch={setSearchQuery} />
       
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="fb-flex fb-justify-between fb-items-center mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Manage Packages</h3>
-            <p className="text-sm text-gray-600">Add, edit, or remove service packages</p>
+            <h3 className="text-xl fb-font-bold text-gray-900">Manage Packages</h3>
+            <p className="fb-text-muted fb-text-small">Add, edit, or remove service packages</p>
           </div>
-          <Button
+          <button
             onClick={() => setIsModalOpen(true)}
-            icon={Plus}
+            className="fb-btn fb-flex fb-items-center fb-space-x-2"
           >
+            <Plus className="w-4 h-4" />
             Add Package
-          </Button>
+          </button>
         </div>
 
         {loading ? (
-          <p>Loading packages...</p>
+          <div className="fb-flex fb-items-center fb-justify-center py-12">
+            <div className="fb-spinner"></div>
+            <span className="ml-2 fb-text-muted">Loading packages...</span>
+          </div>
         ) : error ? (
-          <p className="text-red-500">Error: {error}</p>
+          <div className="fb-card p-6 text-center">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="fb-grid fb-grid-3 gap-6">
             {filteredPackages.map((pkg) => {
               const features = Array.isArray(pkg.features) ? pkg.features : [];
               return (
-                <div key={pkg.id} className={`bg-white rounded-lg shadow-sm border-2 p-6 relative ${
-                  pkg.popular ? 'border-blue-500' : 'border-gray-200'
+                <div key={pkg.id} className={`fb-card p-6 relative transition-all hover:shadow-lg ${
+                  pkg.is_popular ? 'ring-2 ring-blue-500 ring-opacity-50' : ''
                 }`}>
-                  {pkg.popular && (
+                  {pkg.is_popular && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center">
+                      <span className="fb-badge-info fb-flex fb-items-center">
                         <Star className="w-3 h-3 mr-1" />
                         Popular
                       </span>
                     </div>
                   )}
                   
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <Package className="w-8 h-8 text-blue-600 mr-3" />
+                  <div className="fb-flex fb-items-start fb-justify-between mb-4">
+                    <div className="fb-flex fb-items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg fb-flex fb-items-center fb-justify-center mr-3">
+                        <Package className="w-5 h-5 text-blue-600" />
+                      </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{pkg.title}</h4>
-                        <p className="text-2xl font-bold text-blue-600">{pkg.price}</p>
-                        <p className="text-sm text-gray-500">{pkg.duration}</p>
+                        <h4 className="fb-font-semibold text-gray-900">{pkg.title}</h4>
+                        <p className="text-2xl fb-font-bold text-blue-600">{pkg.price}</p>
+                        {pkg.duration && (
+                          <p className="fb-text-small fb-text-muted">{pkg.duration}</p>
+                        )}
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="fb-flex fb-space-x-2">
                       <button
                         onClick={() => {
                           setEditingPackage(pkg);
                           setIsModalOpen(true);
                         }}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeletePackage(pkg.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 text-sm mb-4">{pkg.description}</p>
+                  <p className="fb-text-muted fb-text-small mb-4 line-clamp-3">{pkg.description}</p>
                   
                   {features.length > 0 && (
                     <div>
-                      <h5 className="text-sm font-medium text-gray-900 mb-2">Features:</h5>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <h5 className="fb-text-small fb-font-semibold text-gray-900 mb-2">Features:</h5>
+                      <ul className="fb-text-small fb-text-muted space-y-1">
                         {features.map((feature, index) => (
-                          <li key={index} className="flex items-center">
+                          <li key={index} className="fb-flex fb-items-center">
                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2"></span>
                             {feature}
                           </li>
@@ -194,9 +239,10 @@ const Packages: React.FC = () => {
         )}
 
         {filteredPackages.length === 0 && !loading && !error && (
-          <div className="text-center py-12">
-            <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No packages found</p>
+          <div className="fb-card p-12 text-center">
+            <Package className="w-16 h-16 fb-text-muted mx-auto mb-4" />
+            <h3 className="text-lg fb-font-semibold text-gray-900 mb-2">No packages found</h3>
+            <p className="fb-text-muted">Get started by adding your first package</p>
           </div>
         )}
       </div>

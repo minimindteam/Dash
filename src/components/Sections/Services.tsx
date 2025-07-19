@@ -21,15 +21,50 @@ const Services: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Dummy data for testing UI
+  const dummyServices = [
+    {
+      id: '1',
+      title: 'Web Development',
+      description: 'Custom websites and web applications built with modern technologies',
+      icon: 'Globe',
+      price: '$2,500',
+      features: ['Responsive Design', 'SEO Optimized', 'Fast Loading', 'Mobile Friendly'],
+      cover_image_url: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg'
+    },
+    {
+      id: '2',
+      title: 'Mobile App Development',
+      description: 'Native and cross-platform mobile applications for iOS and Android',
+      icon: 'Smartphone',
+      price: '$5,000',
+      features: ['Cross Platform', 'Native Performance', 'App Store Ready', 'Push Notifications'],
+      cover_image_url: 'https://images.pexels.com/photos/147413/twitter-facebook-together-exchange-of-information-147413.jpeg'
+    },
+    {
+      id: '3',
+      title: 'UI/UX Design',
+      description: 'Beautiful and intuitive user interface and experience design',
+      icon: 'Monitor',
+      price: '$1,500',
+      features: ['User Research', 'Wireframing', 'Prototyping', 'Design Systems'],
+      cover_image_url: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg'
+    }
+  ];
+
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/services`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch services');
-      }
-      const data: Service[] = await response.json();
-      setServices(data);
+      // Use dummy data for now to test UI
+      setServices(dummyServices);
+      
+      // Uncomment this when Supabase is working properly
+      // const response = await fetch(`${API_URL}/services`);
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch services');
+      // }
+      // const data: Service[] = await response.json();
+      // setServices(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -113,72 +148,89 @@ const Services: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-gray-50">
       <Header title="Services" onSearch={setSearchQuery} />
       
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="fb-flex fb-justify-between fb-items-center mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Manage Services</h3>
-            <p className="text-sm text-gray-600">Add, edit, or remove services from your website</p>
+            <h3 className="text-xl fb-font-bold text-gray-900">Manage Services</h3>
+            <p className="fb-text-muted fb-text-small">Add, edit, or remove services from your website</p>
           </div>
-          <Button
+          <button
             onClick={() => setIsModalOpen(true)}
-            icon={Plus}
+            className="fb-btn fb-flex fb-items-center fb-space-x-2"
           >
+            <Plus className="w-4 h-4" />
             Add Service
-          </Button>
+          </button>
         </div>
 
         {loading ? (
-          <p>Loading services...</p>
+          <div className="fb-flex fb-items-center fb-justify-center py-12">
+            <div className="fb-spinner"></div>
+            <span className="ml-2 fb-text-muted">Loading services...</span>
+          </div>
         ) : error ? (
-          <p className="text-red-500">Error: {error}</p>
+          <div className="fb-card p-6 text-center">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="fb-grid fb-grid-3 gap-6">
             {filteredServices.map((service) => {
               const IconComponent = iconMap[service.icon as keyof typeof iconMap] || Globe;
               const features = Array.isArray(service.features) ? service.features : [];
               return (
-                <div key={service.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <IconComponent className="w-8 h-8 text-blue-600 mr-3" />
+                <div key={service.id} className="fb-card p-6 hover:shadow-lg transition-shadow">
+                  {service.cover_image_url && (
+                    <div className="mb-4 -mx-6 -mt-6">
+                      <img 
+                        src={service.cover_image_url} 
+                        alt={service.title}
+                        className="w-full h-48 object-cover rounded-t-lg"
+                      />
+                    </div>
+                  )}
+                  <div className="fb-flex fb-items-start fb-justify-between mb-4">
+                    <div className="fb-flex fb-items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg fb-flex fb-items-center fb-justify-center mr-3">
+                        <IconComponent className="w-5 h-5 text-blue-600" />
+                      </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{service.title}</h4>
+                        <h4 className="fb-font-semibold text-gray-900">{service.title}</h4>
                         {service.price && (
-                          <p className="text-sm text-green-600 font-medium">{service.price}</p>
+                          <p className="fb-text-small text-green-600 fb-font-semibold">{service.price}</p>
                         )}
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="fb-flex fb-space-x-2">
                       <button
                         onClick={() => {
                           setEditingService(service);
                           setIsModalOpen(true);
                         }}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteService(service.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 text-sm mb-4">{service.description}</p>
+                  <p className="fb-text-muted fb-text-small mb-4 line-clamp-3">{service.description}</p>
                   
                   {features.length > 0 && (
                     <div>
-                      <h5 className="text-sm font-medium text-gray-900 mb-2">Features:</h5>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <h5 className="fb-text-small fb-font-semibold text-gray-900 mb-2">Features:</h5>
+                      <ul className="fb-text-small fb-text-muted space-y-1">
                         {features.map((feature: string, index: number) => (
-                          <li key={index} className="flex items-center">
-                            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mr-2"></span>
+                          <li key={index} className="fb-flex fb-items-center">
+                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2"></span>
                             {feature}
                           </li>
                         ))}
@@ -192,9 +244,10 @@ const Services: React.FC = () => {
         )}
 
         {filteredServices.length === 0 && !loading && !error && (
-          <div className="text-center py-12">
-            <Globe className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No services found</p>
+          <div className="fb-card p-12 text-center">
+            <Globe className="w-16 h-16 fb-text-muted mx-auto mb-4" />
+            <h3 className="text-lg fb-font-semibold text-gray-900 mb-2">No services found</h3>
+            <p className="fb-text-muted">Get started by adding your first service</p>
           </div>
         )}
       </div>
